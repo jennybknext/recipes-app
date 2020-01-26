@@ -1,0 +1,11 @@
+<app-header
+  (recipesSelected)="onRecipesSelected()"
+  (shoppingListSelected)="onShoppingListSelected()" ></app-header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <app-recipes *ngIf="displayRecipes"></app-recipes>
+      <app-shopping-list *ngIf="!displayRecipes"></app-shopping-list>
+    </div>
+  </div>
+</div>
