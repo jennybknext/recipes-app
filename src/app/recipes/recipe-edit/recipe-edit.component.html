@@ -1,1 +1,71 @@
-<p>recipe-edit works!</p>
+<form [formGroup]="recipeForm" (ngSubmit)="onSaveRecipe()">
+<div class="row">
+  <div class="col-xs-12 btn-toolbar">
+    <button class="btn btn-success" type="submit">Save</button>
+    <button class="btn btn-alert" (click)="onCancel()">Cancel</button>
+  </div>
+</div>
+  <div class="row">
+    <div class="col-xs-12 form-group">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="recipeName"
+        class="form-control"
+        required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 form-group">
+      <label for="imageUrl">Image URL</label>
+      <input
+        type="text"
+        id="imageUrl"
+        formControlName="imageUrl"
+        class="form-control"
+        required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="5"
+        cols="20"
+        required></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12" formArrayName="ingredients">
+      <div class="row" *ngFor="let ingredientCtrl of controls; let i=index"
+           [formGroupName]="i">
+        <div class="col-xs-8 form-group">
+          <input type="text"
+                 formControlName="name"
+                 class="form-control">
+        </div>
+        <div class="col-xs-3 form-group">
+          <input type="number"
+                 formControlName="amount"
+                 class="form-control" min="1">
+        </div>
+        <div class="col-xs-1 form-group">
+          <button class="btn btn-danger">X</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--  <div class="row">-->
+<!--    <div class="col-xs-12">-->
+<!--      <img [src]="imageUrl"-->
+<!--           [alt]="imageUrl"-->
+<!--           class="img-responsive"-->
+<!--           style="max-height: 50px;">-->
+<!--    </div>-->
+<!--  </div>-->
+</form>
