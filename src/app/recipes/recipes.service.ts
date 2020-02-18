@@ -7,7 +7,6 @@ import {Subject} from 'rxjs';
   providedIn: 'root'
 })
 export class RecipesService {
-  startedEditRecipe = new Subject<number>();
   recipeChanged = new Subject<Recipe[]>();
   private recipes = [
     new Recipe('Test recipe 1',
@@ -50,6 +49,11 @@ export class RecipesService {
 
   addRecipe(recipe: Recipe) {
     this.recipes.push(recipe);
+    this.refreshRecipes();
+  }
+
+  deleteRecipe(index: number) {
+    this.recipes.splice(index,  1);
     this.refreshRecipes();
   }
 

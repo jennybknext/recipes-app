@@ -15,6 +15,17 @@ export class RecipeEditComponent implements OnInit {
   editedRecipe: Recipe;
   recipeForm: FormGroup;
 
+  private static buildIngredients(data) {
+    const ingredientsCtrl = new FormArray([], Validators.required);
+    for (const ing of data) {
+      ingredientsCtrl.push(new FormGroup({
+        'name': new FormControl(ing.name, Validators.required),
+        'amount': new FormControl(ing.amount, Validators.required)
+      }));
+    }
+    return ingredientsCtrl;
+  }
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private recipesService: RecipesService) {
@@ -43,27 +54,42 @@ export class RecipeEditComponent implements OnInit {
     );
     if (this.editMode) {
       this.recipesService.updateRecipe(this.index, recipe);
-      this.router.navigate(['/recipes', this.index]);
     } else {
       this.recipesService.addRecipe(recipe);
-      this.router.navigate(['/recipes']);
     }
+    this.router.navigate(['../'], {relativeTo: this.route});
   }
 
   onCancel() {
-    this.router.navigate(['/recipes']);
+    this.router.navigate(['../'], {relativeTo: this.route});
+  }
+
+  onDeleteIngredient(index: number) {
+    (this.recipeForm.get('ingredients') as FormArray).removeAt(index) ;
+  }
+
+  onAddIngredient() {
+    (this.recipeForm.get('ingredients') as FormArray).push(
+      new FormGroup({
+        'name': new FormControl(null,  Validators.required),
+        'amount': new FormControl(null,  Validators.required)
+      })
+    );
   }
 
   private initForm() {
     let recipeName = '';
     let imageUrl = '';
     let description = '';
-    const ingredients = new FormArray([]);
+    let ingredients = new FormArray([], Validators.required);
     if (this.editMode) {
-      const editedRecipeData = this.getEditedRecipeData(recipeName, imageUrl, description, ingredients);
+      const editedRecipeData = this.getEditedRecipeData(recipeName, imageUrl, description);
       recipeName = editedRecipeData.recipeName;
       imageUrl = editedRecipeData.imageUrl;
       description = editedRecipeData.description;
+      if (this.editedRecipe.ingredients) {
+        ingredients = RecipeEditComponent.buildIngredients(this.editedRecipe.ingredients);
+      }
     }
     this.recipeForm = new FormGroup({
         'recipeName': new FormControl(recipeName, Validators.required),
@@ -74,19 +100,13 @@ export class RecipeEditComponent implements OnInit {
     );
   }
 
-  private getEditedRecipeData(recipeName: string, imageUrl: string, description: string, ingredients) {
+  private getEditedRecipeData(recipeName: string, imageUrl: string, description: string) {
     this.editedRecipe = this.recipesService.getRecipe(this.index);
     recipeName = this.editedRecipe.name;
     imageUrl = this.editedRecipe.imagePath;
     description = this.editedRecipe.description;
-    if (this.editedRecipe.ingredients) {
-      for (const ing of this.editedRecipe.ingredients) {
-        ingredients.push(new FormGroup({
-          'name': new FormControl(ing.name),
-          'amount': new FormControl(ing.amount)
-        }));
-      }
-    }
+
     return {recipeName, imageUrl, description};
   }
+
 }
